@@ -6,119 +6,228 @@
 <title>Loading...</title>
 
 <style>
+
 *{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
+margin:0;
+padding:0;
+box-sizing:border-box;
 }
 
 body{
-    overflow:hidden;
-    height:100vh;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    background:linear-gradient(135deg,#667eea,#764ba2);
-    font-family:Arial,Helvetica,sans-serif;
+overflow:hidden;
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+flex-direction:column;
+background:#090909;
+font-family:Arial,Helvetica,sans-serif;
+color:white;
 }
 
-h1{
-    color:white;
-    font-size:70px;
-    opacity:0;
-    transform:scale(.3);
-    transition:all .8s ease;
-    text-align:center;
-    text-shadow:0 0 20px rgba(255,255,255,.5);
+#loader{
+font-size:50px;
+animation:pulse 1s infinite;
 }
 
-.show{
-    opacity:1;
-    transform:scale(1);
+#message{
+display:none;
+text-align:center;
+animation:pop .8s ease forwards;
 }
 
-.loader{
-    color:white;
-    font-size:40px;
-    animation:pulse 1s infinite;
+#message h1{
+font-size:80px;
+color:#FFD93D;
+text-shadow:0 0 25px gold;
 }
 
-@keyframes pulse{
-    50%{
-        opacity:.3;
-    }
+#message h2{
+margin-top:20px;
+font-size:55px;
+color:white;
+}
+
+#message p{
+margin-top:25px;
+font-size:40px;
+animation:shake .5s infinite;
+}
+
+canvas{
+position:absolute;
+top:0;
+left:0;
+width:100%;
+height:100%;
+pointer-events:none;
 }
 
 .confetti{
-    position:absolute;
-    width:12px;
-    height:12px;
-    animation:fall linear forwards;
+position:absolute;
+width:12px;
+height:12px;
+animation:fall linear forwards;
+}
+
+@keyframes pulse{
+50%{opacity:.3;}
+}
+
+@keyframes pop{
+0%{
+transform:scale(.2);
+opacity:0;
+}
+100%{
+transform:scale(1);
+opacity:1;
+}
+}
+
+@keyframes shake{
+0%{transform:translateX(-3px);}
+25%{transform:translateX(3px);}
+50%{transform:translateX(-3px);}
+75%{transform:translateX(3px);}
+100%{transform:translateX(0);}
 }
 
 @keyframes fall{
-    from{
-        transform:translateY(-100vh) rotate(0deg);
-    }
-    to{
-        transform:translateY(110vh) rotate(720deg);
-    }
+from{
+transform:translateY(-100vh) rotate(0deg);
 }
+to{
+transform:translateY(110vh) rotate(720deg);
+}
+}
+
 </style>
 </head>
 
 <body>
 
-<div class="loader" id="loader">
-✨ Loading...
+<canvas id="fireworks"></canvas>
+
+<div id="loader">
+⏳ Preparing surprise...
 </div>
 
-<h1 id="message">
-🎉 Hey there 10/10!! 🎉
-</h1>
+<div id="message">
+<h1>⏰ IT'S TIME!!</h1>
+<h2>🎉 Congratulations!! 🎉</h2>
+<p>🔋 Time to give me your charger!! 😂</p>
+</div>
 
 <script>
 
 const colors=[
-"#ff4d4d",
+"#ff3838",
 "#ffd93d",
 "#6bff6b",
-"#00d2ff",
+"#4dc3ff",
 "#ff66ff",
 "#ffffff"
 ];
 
 function confetti(){
 
-    for(let i=0;i<180;i++){
+for(let i=0;i<250;i++){
 
-        const c=document.createElement("div");
-        c.className="confetti";
+const c=document.createElement("div");
 
-        c.style.left=Math.random()*100+"vw";
-        c.style.background=colors[Math.floor(Math.random()*colors.length)];
+c.className="confetti";
 
-        c.style.animationDuration=(3+Math.random()*3)+"s";
-        c.style.opacity=Math.random();
+c.style.left=Math.random()*100+"vw";
 
-        document.body.appendChild(c);
+c.style.background=colors[Math.floor(Math.random()*colors.length)];
 
-        setTimeout(()=>c.remove(),6000);
-    }
+c.style.animationDuration=(3+Math.random()*3)+"s";
+
+document.body.appendChild(c);
+
+setTimeout(()=>c.remove(),6000);
+
 }
+
+}
+
+// Fireworks
+
+const canvas=document.getElementById("fireworks");
+const ctx=canvas.getContext("2d");
+
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+
+let particles=[];
+
+function firework(){
+
+for(let i=0;i<120;i++){
+
+particles.push({
+
+x:canvas.width/2,
+y:canvas.height/2,
+
+dx:(Math.random()-0.5)*10,
+dy:(Math.random()-0.5)*10,
+
+life:100,
+
+color:colors[Math.floor(Math.random()*colors.length)]
+
+});
+
+}
+
+}
+
+function animate(){
+
+ctx.fillStyle="rgba(0,0,0,0.15)";
+ctx.fillRect(0,0,canvas.width,canvas.height);
+
+particles.forEach((p,index)=>{
+
+ctx.beginPath();
+ctx.arc(p.x,p.y,3,0,Math.PI*2);
+ctx.fillStyle=p.color;
+ctx.fill();
+
+p.x+=p.dx;
+p.y+=p.dy;
+
+p.dy+=0.05;
+
+p.life--;
+
+if(p.life<=0){
+particles.splice(index,1);
+}
+
+});
+
+requestAnimationFrame(animate);
+
+}
+
+animate();
 
 setTimeout(()=>{
 
 document.getElementById("loader").style.display="none";
 
-const msg=document.getElementById("message");
-msg.classList.add("show");
+document.getElementById("message").style.display="block";
 
 document.title="🎉 Surprise!";
 
 confetti();
 
-},2500);
+setInterval(firework,700);
+
+},3000);
 
 </script>
 

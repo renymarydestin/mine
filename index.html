@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Loading...</title>
+    <style>
+        body{
+            margin:0;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            height:100vh;
+            background:#111;
+            color:white;
+            font-family:Arial;
+        }
+        h1{
+            font-size:60px;
+        }
+    </style>
+</head>
+<body>
+
+<h1 id="msg">Loading...</h1>
+
+<script>
+setTimeout(function(){
+    document.getElementById("msg").innerHTML="🔋 Give me your charger!";
+},2000);
+</script>
+
+</body>
+</html>

@@ -1,31 +1,125 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Loading...</title>
-    <style>
-        body{
-            margin:0;
-            display:flex;
-            justify-content:center;
-            align-items:center;
-            height:100vh;
-            background:#111;
-            color:white;
-            font-family:Arial;
-        }
-        h1{
-            font-size:60px;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Loading...</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    overflow:hidden;
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:linear-gradient(135deg,#667eea,#764ba2);
+    font-family:Arial,Helvetica,sans-serif;
+}
+
+h1{
+    color:white;
+    font-size:70px;
+    opacity:0;
+    transform:scale(.3);
+    transition:all .8s ease;
+    text-align:center;
+    text-shadow:0 0 20px rgba(255,255,255,.5);
+}
+
+.show{
+    opacity:1;
+    transform:scale(1);
+}
+
+.loader{
+    color:white;
+    font-size:40px;
+    animation:pulse 1s infinite;
+}
+
+@keyframes pulse{
+    50%{
+        opacity:.3;
+    }
+}
+
+.confetti{
+    position:absolute;
+    width:12px;
+    height:12px;
+    animation:fall linear forwards;
+}
+
+@keyframes fall{
+    from{
+        transform:translateY(-100vh) rotate(0deg);
+    }
+    to{
+        transform:translateY(110vh) rotate(720deg);
+    }
+}
+</style>
 </head>
+
 <body>
 
-<h1 id="msg">Loading...</h1>
+<div class="loader" id="loader">
+✨ Loading...
+</div>
+
+<h1 id="message">
+🎉 Hey there 10/10!! 🎉
+</h1>
 
 <script>
-setTimeout(function(){
-    document.getElementById("msg").innerHTML="🔋 Give me your charger!";
-},2000);
+
+const colors=[
+"#ff4d4d",
+"#ffd93d",
+"#6bff6b",
+"#00d2ff",
+"#ff66ff",
+"#ffffff"
+];
+
+function confetti(){
+
+    for(let i=0;i<180;i++){
+
+        const c=document.createElement("div");
+        c.className="confetti";
+
+        c.style.left=Math.random()*100+"vw";
+        c.style.background=colors[Math.floor(Math.random()*colors.length)];
+
+        c.style.animationDuration=(3+Math.random()*3)+"s";
+        c.style.opacity=Math.random();
+
+        document.body.appendChild(c);
+
+        setTimeout(()=>c.remove(),6000);
+    }
+}
+
+setTimeout(()=>{
+
+document.getElementById("loader").style.display="none";
+
+const msg=document.getElementById("message");
+msg.classList.add("show");
+
+document.title="🎉 Surprise!";
+
+confetti();
+
+},2500);
+
 </script>
 
 </body>

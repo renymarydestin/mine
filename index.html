@@ -1,86 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>One Question 🤔</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,Helvetica,sans-serif;
+}
+
+body{
+height:100vh;
+overflow:hidden;
+display:flex;
+justify-content:center;
+align-items:center;
+background:linear-gradient(135deg,#6a11cb,#2575fc);
+}
+
+.card{
+background:white;
+padding:40px;
+border-radius:25px;
+box-shadow:0 20px 50px rgba(0,0,0,.25);
+text-align:center;
+width:520px;
+max-width:90%;
+position:relative;
+z-index:10;
+}
+
+h1{
+font-size:38px;
+margin-bottom:35px;
+}
+
+button{
+padding:15px 35px;
+font-size:24px;
+border:none;
+border-radius:12px;
+cursor:pointer;
+transition:.25s;
+font-weight:bold;
+}
+
+#yes{
+background:#2ecc71;
+color:white;
+}
+
+#yes:hover{
+transform:scale(1.08);
+}
+
+#no{
+position:fixed;
+background:#e74c3c;
+color:white;
+}
+
+canvas{
+position:fixed;
+top:0;
+left:0;
+pointer-events:none;
+}
+
+</style>
+</head>
+
+<body>
+
+<canvas id="canvas"></canvas>
+
+<div class="card">
+
+<h1>
+🔋 Will you give me your charger?
+</h1>
+
+<button id="yes">
+YES 😊
+</button>
+
+</div>
+
+<button id="no">
+NO 😈
+</button>
+
 <script>
 
-const no = document.getElementById("no");
-const yes = document.getElementById("yes");
+const no=document.getElementById("no");
+const yes=document.getElementById("yes");
 
-const texts = [
-    "NO 😈",
-    "Are you sure? 🤔",
-    "Think again! 😂",
-    "Nice try 😏",
-    "Still no? 😆",
-    "Catch me first! 🏃",
-    "You can't catch me 😜",
-    "Wrong answer 😎",
-    "Try harder 🤭",
-    "Just press YES 😇"
+const texts=[
+"NO 😈",
+"Are you sure? 🤔",
+"Think again 😂",
+"Nice try 😏",
+"Still no? 😆",
+"Catch me first 🏃",
+"You can't catch me 😜",
+"Wrong answer 😎",
+"Try harder 🤭",
+"Just press YES 😇",
+"Come on 😁",
+"Almost got me 😂"
 ];
 
-let attempt = 0;
-let yesScale = 1;
+let tries=0;
+let yesScale=1;
 
 function moveButton(){
 
-    const x = Math.random() * (window.innerWidth - 170);
-    const y = Math.random() * (window.innerHeight - 80);
+const x=Math.random()*(window.innerWidth-170);
+const y=Math.random()*(window.innerHeight-80);
 
-    no.style.left = x + "px";
-    no.style.top = y + "px";
+no.style.left=x+"px";
+no.style.top=y+"px";
 
-    no.innerText = texts[attempt % texts.length];
+no.innerHTML=texts[tries%texts.length];
 
-    attempt++;
+tries++;
 
-    // Make YES button larger
-    yesScale += 0.12;
-    yes.style.transform = `scale(${yesScale})`;
+yesScale+=0.08;
+yes.style.transform=`scale(${yesScale})`;
 
-    // Shrink NO button after a few tries
-    if(attempt > 6){
-        no.style.transform = `scale(${Math.max(0.35,1-attempt*0.04)})`;
-    }
+if(tries>8){
+
+const size=Math.max(0.3,1-(tries*0.03));
+
+no.style.transform=`scale(${size})`;
+
+}
 
 }
 
 moveButton();
 
-no.addEventListener("mouseenter", moveButton);
+no.addEventListener("mouseenter",moveButton);
 
-no.addEventListener("touchstart", function(e){
-    e.preventDefault();
-    moveButton();
+no.addEventListener("touchstart",function(e){
+
+e.preventDefault();
+
+moveButton();
+
 });
 
-document.getElementById("yes").onclick = function(){
+yes.onclick=function(){
 
-document.querySelector(".card").innerHTML = `
-<h1 style="font-size:65px;">🎉 YES!! 🎉</h1>
+document.querySelector(".card").innerHTML=`
 
-<h2 style="margin-top:20px;">
-You made the right choice 😎
+<h1 style="font-size:70px;">🎉 IT'S TIME!! 🎉</h1>
+
+<h2 style="margin-top:25px;font-size:40px;">
+🔋 Give me your charger!!
 </h2>
 
-<h2 style="margin-top:25px;">
-🔋 Now it's time...
-</h2>
+<p style="margin-top:30px;font-size:28px;">
+😂 You never had a choice anyway.
+</p>
 
-<h1 style="margin-top:20px;color:#2ecc71;">
-Give me your charger!! 😂
-</h1>
 `;
 
 confetti();
 
 };
 
-
-// ---------- Confetti ----------
-
 const canvas=document.getElementById("canvas");
 const ctx=canvas.getContext("2d");
 
+function resize(){
+
 canvas.width=window.innerWidth;
 canvas.height=window.innerHeight;
+
+}
+
+resize();
+
+window.addEventListener("resize",resize);
 
 const colors=[
 "#ff3838",
@@ -98,12 +205,19 @@ let pieces=[];
 for(let i=0;i<250;i++){
 
 pieces.push({
+
 x:window.innerWidth/2,
+
 y:window.innerHeight/2,
+
 dx:(Math.random()-0.5)*12,
+
 dy:(Math.random()-0.5)*12,
+
 life:140,
+
 color:colors[Math.floor(Math.random()*colors.length)]
+
 });
 
 }
@@ -115,22 +229,29 @@ ctx.clearRect(0,0,canvas.width,canvas.height);
 pieces.forEach((p,index)=>{
 
 ctx.fillStyle=p.color;
+
 ctx.fillRect(p.x,p.y,8,8);
 
 p.x+=p.dx;
+
 p.y+=p.dy;
+
 p.dy+=0.08;
 
 p.life--;
 
 if(p.life<=0){
+
 pieces.splice(index,1);
+
 }
 
 });
 
 if(pieces.length){
+
 requestAnimationFrame(animate);
+
 }
 
 }
@@ -140,3 +261,6 @@ animate();
 }
 
 </script>
+
+</body>
+</html>

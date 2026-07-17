@@ -1,235 +1,142 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Loading...</title>
-
-<style>
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-}
-
-body{
-overflow:hidden;
-height:100vh;
-display:flex;
-justify-content:center;
-align-items:center;
-flex-direction:column;
-background:#090909;
-font-family:Arial,Helvetica,sans-serif;
-color:white;
-}
-
-#loader{
-font-size:50px;
-animation:pulse 1s infinite;
-}
-
-#message{
-display:none;
-text-align:center;
-animation:pop .8s ease forwards;
-}
-
-#message h1{
-font-size:80px;
-color:#FFD93D;
-text-shadow:0 0 25px gold;
-}
-
-#message h2{
-margin-top:20px;
-font-size:55px;
-color:white;
-}
-
-#message p{
-margin-top:25px;
-font-size:40px;
-animation:shake .5s infinite;
-}
-
-canvas{
-position:absolute;
-top:0;
-left:0;
-width:100%;
-height:100%;
-pointer-events:none;
-}
-
-.confetti{
-position:absolute;
-width:12px;
-height:12px;
-animation:fall linear forwards;
-}
-
-@keyframes pulse{
-50%{opacity:.3;}
-}
-
-@keyframes pop{
-0%{
-transform:scale(.2);
-opacity:0;
-}
-100%{
-transform:scale(1);
-opacity:1;
-}
-}
-
-@keyframes shake{
-0%{transform:translateX(-3px);}
-25%{transform:translateX(3px);}
-50%{transform:translateX(-3px);}
-75%{transform:translateX(3px);}
-100%{transform:translateX(0);}
-}
-
-@keyframes fall{
-from{
-transform:translateY(-100vh) rotate(0deg);
-}
-to{
-transform:translateY(110vh) rotate(720deg);
-}
-}
-
-</style>
-</head>
-
-<body>
-
-<canvas id="fireworks"></canvas>
-
-<div id="loader">
-⏳ Preparing surprise...
-</div>
-
-<div id="message">
-<h1>⏰ IT'S TIME!!</h1>
-<h2>🎉 Congratulations!! 🎉</h2>
-<p>🔋 Time to give me your charger!! 😂</p>
-</div>
-
 <script>
 
-const colors=[
-"#ff3838",
-"#ffd93d",
-"#6bff6b",
-"#4dc3ff",
-"#ff66ff",
-"#ffffff"
+const no = document.getElementById("no");
+const yes = document.getElementById("yes");
+
+const texts = [
+    "NO 😈",
+    "Are you sure? 🤔",
+    "Think again! 😂",
+    "Nice try 😏",
+    "Still no? 😆",
+    "Catch me first! 🏃",
+    "You can't catch me 😜",
+    "Wrong answer 😎",
+    "Try harder 🤭",
+    "Just press YES 😇"
 ];
 
-function confetti(){
+let attempt = 0;
+let yesScale = 1;
 
-for(let i=0;i<250;i++){
+function moveButton(){
 
-const c=document.createElement("div");
+    const x = Math.random() * (window.innerWidth - 170);
+    const y = Math.random() * (window.innerHeight - 80);
 
-c.className="confetti";
+    no.style.left = x + "px";
+    no.style.top = y + "px";
 
-c.style.left=Math.random()*100+"vw";
+    no.innerText = texts[attempt % texts.length];
 
-c.style.background=colors[Math.floor(Math.random()*colors.length)];
+    attempt++;
 
-c.style.animationDuration=(3+Math.random()*3)+"s";
+    // Make YES button larger
+    yesScale += 0.12;
+    yes.style.transform = `scale(${yesScale})`;
 
-document.body.appendChild(c);
-
-setTimeout(()=>c.remove(),6000);
+    // Shrink NO button after a few tries
+    if(attempt > 6){
+        no.style.transform = `scale(${Math.max(0.35,1-attempt*0.04)})`;
+    }
 
 }
 
-}
+moveButton();
 
-// Fireworks
+no.addEventListener("mouseenter", moveButton);
 
-const canvas=document.getElementById("fireworks");
+no.addEventListener("touchstart", function(e){
+    e.preventDefault();
+    moveButton();
+});
+
+document.getElementById("yes").onclick = function(){
+
+document.querySelector(".card").innerHTML = `
+<h1 style="font-size:65px;">🎉 YES!! 🎉</h1>
+
+<h2 style="margin-top:20px;">
+You made the right choice 😎
+</h2>
+
+<h2 style="margin-top:25px;">
+🔋 Now it's time...
+</h2>
+
+<h1 style="margin-top:20px;color:#2ecc71;">
+Give me your charger!! 😂
+</h1>
+`;
+
+confetti();
+
+};
+
+
+// ---------- Confetti ----------
+
+const canvas=document.getElementById("canvas");
 const ctx=canvas.getContext("2d");
 
 canvas.width=window.innerWidth;
 canvas.height=window.innerHeight;
 
-let particles=[];
+const colors=[
+"#ff3838",
+"#ffd93d",
+"#2ecc71",
+"#3498db",
+"#9b59b6",
+"#ffffff"
+];
 
-function firework(){
+function confetti(){
 
-for(let i=0;i<120;i++){
+let pieces=[];
 
-particles.push({
+for(let i=0;i<250;i++){
 
-x:canvas.width/2,
-y:canvas.height/2,
-
-dx:(Math.random()-0.5)*10,
-dy:(Math.random()-0.5)*10,
-
-life:100,
-
+pieces.push({
+x:window.innerWidth/2,
+y:window.innerHeight/2,
+dx:(Math.random()-0.5)*12,
+dy:(Math.random()-0.5)*12,
+life:140,
 color:colors[Math.floor(Math.random()*colors.length)]
-
 });
-
-}
 
 }
 
 function animate(){
 
-ctx.fillStyle="rgba(0,0,0,0.15)";
-ctx.fillRect(0,0,canvas.width,canvas.height);
+ctx.clearRect(0,0,canvas.width,canvas.height);
 
-particles.forEach((p,index)=>{
+pieces.forEach((p,index)=>{
 
-ctx.beginPath();
-ctx.arc(p.x,p.y,3,0,Math.PI*2);
 ctx.fillStyle=p.color;
-ctx.fill();
+ctx.fillRect(p.x,p.y,8,8);
 
 p.x+=p.dx;
 p.y+=p.dy;
-
-p.dy+=0.05;
+p.dy+=0.08;
 
 p.life--;
 
 if(p.life<=0){
-particles.splice(index,1);
+pieces.splice(index,1);
 }
 
 });
 
+if(pieces.length){
 requestAnimationFrame(animate);
+}
 
 }
 
 animate();
 
-setTimeout(()=>{
-
-document.getElementById("loader").style.display="none";
-
-document.getElementById("message").style.display="block";
-
-document.title="🎉 Surprise!";
-
-confetti();
-
-setInterval(firework,700);
-
-},3000);
+}
 
 </script>
-
-</body>
-</html>
